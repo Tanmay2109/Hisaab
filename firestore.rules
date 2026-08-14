@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isGroupMember(groupId) {
+      return isAuthenticated() && (
+        exists(/databases/$(database)/documents/groups/$(groupId)/members/$(request.auth.uid)) ||
+        resource.data.ownerId == request.auth.uid ||
+        request.resource.data.ownerId == request.auth.uid
+      );
+    }
+
+    // User personal data
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+
+      match /{allSubcollections=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Groups & group subcollections
+    match /groups/{groupId} {
+      allow create: if isAuthenticated();
+      allow read, update, delete: if isAuthenticated();
+
+      match /members/{memberId} {
+        allow read, write: if isAuthenticated();
+      }
+
+      match /expenses/{expenseId} {
+        allow read, write: if isAuthenticated();
+      }
+
+      match /settlements/{settlementId} {
+        allow read, write: if isAuthenticated();
+      }
+
+      match /activities/{activityId} {
+        allow read, write: if isAuthenticated();
+      }
+    }
+
+    // Notifications
+    match /notifications/{notificationId} {
+      allow read, update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated();
+    }
+
+    // Audit logs
+    match /auditLogs/{logId} {
+      allow create: if isAuthenticated();
+      allow read: if isAuthenticated();
+    }
+  }
+}

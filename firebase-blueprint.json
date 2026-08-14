@@ -1,0 +1,186 @@
+{
+  "entities": {
+    "users": {
+      "path": "users/{userId}",
+      "schema": {
+        "fullName": { "type": "string" },
+        "email": { "type": "string" },
+        "photoURL": { "type": "string", "optional": true },
+        "phoneNumber": { "type": "string", "optional": true },
+        "country": { "type": "string", "optional": true },
+        "preferredCurrency": { "type": "string" },
+        "timeZone": { "type": "string", "optional": true },
+        "language": { "type": "string", "optional": true },
+        "theme": { "type": "string", "optional": true },
+        "role": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "lastActiveAt": { "type": "string" }
+      }
+    },
+    "accounts": {
+      "path": "users/{userId}/accounts/{accountId}",
+      "schema": {
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "currency": { "type": "string" },
+        "openingBalance": { "type": "number" },
+        "currentBalance": { "type": "number" },
+        "description": { "type": "string", "optional": true },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "transactions": {
+      "path": "users/{userId}/transactions/{transactionId}",
+      "schema": {
+        "accountId": { "type": "string" },
+        "amount": { "type": "number" },
+        "currency": { "type": "string" },
+        "type": { "type": "string" },
+        "category": { "type": "string" },
+        "subcategory": { "type": "string", "optional": true },
+        "merchant": { "type": "string", "optional": true },
+        "description": { "type": "string" },
+        "date": { "type": "string" },
+        "notes": { "type": "string", "optional": true },
+        "tags": { "type": "array", "optional": true },
+        "receiptUrl": { "type": "string", "optional": true },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "budgets": {
+      "path": "users/{userId}/budgets/{budgetId}",
+      "schema": {
+        "category": { "type": "string" },
+        "period": { "type": "string" },
+        "amount": { "type": "number" },
+        "warningThreshold": { "type": "number" },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "goals": {
+      "path": "users/{userId}/goals/{goalId}",
+      "schema": {
+        "name": { "type": "string" },
+        "targetAmount": { "type": "number" },
+        "currentAmount": { "type": "number" },
+        "targetDate": { "type": "string" },
+        "contributionAmount": { "type": "number" },
+        "contributionFrequency": { "type": "string" },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "bills": {
+      "path": "users/{userId}/bills/{billId}",
+      "schema": {
+        "name": { "type": "string" },
+        "amount": { "type": "number" },
+        "currency": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "accountId": { "type": "string", "optional": true },
+        "category": { "type": "string" },
+        "recurrence": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "subscriptions": {
+      "path": "users/{userId}/subscriptions/{subscriptionId}",
+      "schema": {
+        "serviceName": { "type": "string" },
+        "amount": { "type": "number" },
+        "currency": { "type": "string" },
+        "billingCycle": { "type": "string" },
+        "nextPaymentDate": { "type": "string" },
+        "accountId": { "type": "string", "optional": true },
+        "category": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "groups": {
+      "path": "groups/{groupId}",
+      "schema": {
+        "name": { "type": "string" },
+        "description": { "type": "string", "optional": true },
+        "imageUrl": { "type": "string", "optional": true },
+        "currency": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "inviteCode": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "groupMembers": {
+      "path": "groups/{groupId}/members/{memberId}",
+      "schema": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" },
+        "joinedAt": { "type": "string" }
+      }
+    },
+    "groupExpenses": {
+      "path": "groups/{groupId}/expenses/{expenseId}",
+      "schema": {
+        "title": { "type": "string" },
+        "amount": { "type": "number" },
+        "currency": { "type": "string" },
+        "category": { "type": "string" },
+        "date": { "type": "string" },
+        "paidByUserId": { "type": "string" },
+        "participantIds": { "type": "array" },
+        "splitMethod": { "type": "string" },
+        "splits": { "type": "array" },
+        "notes": { "type": "string", "optional": true },
+        "receiptUrl": { "type": "string", "optional": true },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "groupSettlements": {
+      "path": "groups/{groupId}/settlements/{settlementId}",
+      "schema": {
+        "payerId": { "type": "string" },
+        "receiverId": { "type": "string" },
+        "amount": { "type": "number" },
+        "currency": { "type": "string" },
+        "date": { "type": "string" },
+        "note": { "type": "string", "optional": true },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "groupActivities": {
+      "path": "groups/{groupId}/activities/{activityId}",
+      "schema": {
+        "type": { "type": "string" },
+        "actorId": { "type": "string" },
+        "actorName": { "type": "string" },
+        "description": { "type": "string" },
+        "timestamp": { "type": "string" }
+      }
+    },
+    "notifications": {
+      "path": "notifications/{notificationId}",
+      "schema": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "type": { "type": "string" },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "auditLogs": {
+      "path": "auditLogs/{logId}",
+      "schema": {
+        "userId": { "type": "string" },
+        "action": { "type": "string" },
+        "details": { "type": "string" },
+        "timestamp": { "type": "string" }
+      }
+    }
+  }
+}
