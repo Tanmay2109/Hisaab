@@ -1,26 +1,50 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper functions
+    // =====================================================
+    // HELPERS
+    // =====================================================
+
     function isAuthenticated() {
       return request.auth != null;
     }
-    
+
     function isOwner(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
+      return isAuthenticated() &&
+             request.auth.uid == userId;
     }
 
     function isGroupMember(groupId) {
-      return isAuthenticated() && (
-        exists(/databases/$(database)/documents/groups/$(groupId)/members/$(request.auth.uid)) ||
-        resource.data.ownerId == request.auth.uid ||
-        request.resource.data.ownerId == request.auth.uid
-      );
+      return isAuthenticated() &&
+        exists(
+          /databases/$(database)/documents/groups/$(groupId)/members/$(request.auth.uid)
+        );
     }
 
-    // User personal data
+    function isGroupOwner(groupId) {
+      return isAuthenticated() &&
+        get(
+          /databases/$(database)/documents/groups/$(groupId)
+        ).data.ownerId == request.auth.uid;
+    }
+
+    function canAccessGroup(groupId) {
+      return isAuthenticated() &&
+        (
+          isGroupMember(groupId) ||
+          isGroupOwner(groupId)
+        );
+    }
+
+
+    // =====================================================
+    // USER PERSONAL DATA
+    // =====================================================
+
     match /users/{userId} {
+
       allow read, write: if isOwner(userId);
 
       match /{allSubcollections=**} {
@@ -28,38 +52,147 @@ service cloud.firestore {
       }
     }
 
-    // Groups & group subcollections
+
+    // =====================================================
+    // GROUPS
+    // =====================================================
+
     match /groups/{groupId} {
-      allow create: if isAuthenticated();
-      allow read, update, delete: if isAuthenticated();
+
+      // Only authenticated users can create a group,
+      // and they must be the owner.
+      allow create: if isAuthenticated()
+        && request.resource.data.ownerId == request.auth.uid;
+
+      // Only members/owner can read the group.
+      allow read: if canAccessGroup(groupId);
+
+      // Only members/owner can update.
+      allow update: if canAccessGroup(groupId);
+
+      // Only owner can delete.
+      allow delete: if isGroupOwner(groupId);
+
+
+      // ===================================================
+      // GROUP MEMBERS
+      // ===================================================
 
       match /members/{memberId} {
-        allow read, write: if isAuthenticated();
+
+        // Members can see the member list.
+        allow read: if canAccessGroup(groupId);
+
+        // A user can add themselves.
+        // Owner can add another member.
+        allow create: if isAuthenticated()
+          && (
+            memberId == request.auth.uid ||
+            isGroupOwner(groupId)
+          );
+
+        // Only owner can modify/remove members.
+        allow update, delete: if isGroupOwner(groupId);
       }
+
+
+      // ===================================================
+      // GROUP EXPENSES
+      // ===================================================
 
       match /expenses/{expenseId} {
-        allow read, write: if isAuthenticated();
+
+        allow read, write: if canAccessGroup(groupId);
       }
+
+
+      // ===================================================
+      // GROUP SETTLEMENTS
+      // ===================================================
 
       match /settlements/{settlementId} {
-        allow read, write: if isAuthenticated();
+
+        allow read, write: if canAccessGroup(groupId);
       }
+
+
+      // ===================================================
+      // GROUP ACTIVITIES
+      // ===================================================
 
       match /activities/{activityId} {
-        allow read, write: if isAuthenticated();
+
+        allow read, write: if canAccessGroup(groupId);
       }
     }
 
-    // Notifications
-    match /notifications/{notificationId} {
-      allow read, update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
-      allow create: if isAuthenticated();
+
+    // =====================================================
+    // GROUP INVITE CODES
+    // =====================================================
+    //
+    // Invite codes are intentionally separated from groups.
+    // This allows a user who is NOT yet a member to resolve
+    // an invite code without giving them access to the group.
+    //
+    // Path:
+    // groupInvites/{INVITECODE}
+    //
+    // Example:
+    // groupInvites/15HW7N
+    //
+    // =====================================================
+
+    match /groupInvites/{inviteCode} {
+
+      // Authenticated users can resolve an invite code.
+      // This document contains only:
+      // - groupId
+      // - inviteCode
+      // - ownerId
+      allow read: if isAuthenticated();
+
+      // Only the group owner can create the invite mapping.
+      allow create: if isAuthenticated()
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.groupId is string
+        && get(
+          /databases/$(database)/documents/groups/$(request.resource.data.groupId)
+        ).data.ownerId == request.auth.uid;
+
+      // Only owner can update/delete invite.
+      allow update, delete: if isAuthenticated()
+        && resource.data.ownerId == request.auth.uid;
     }
 
-    // Audit logs
+
+    // =====================================================
+    // NOTIFICATIONS
+    // =====================================================
+
+    match /notifications/{notificationId} {
+
+      allow read, update, delete:
+        if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+
+      allow create:
+        if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid;
+    }
+
+
+    // =====================================================
+    // AUDIT LOGS
+    // =====================================================
+
     match /auditLogs/{logId} {
+
       allow create: if isAuthenticated();
-      allow read: if isAuthenticated();
+
+      allow read:
+        if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
     }
   }
 }
