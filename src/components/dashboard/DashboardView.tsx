@@ -156,7 +156,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             className="inline-flex items-center gap-2 rounded-xl bg-[#5A5A40] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#484832] shadow-xs"
           >
             <Sparkles className="h-4 w-4 text-[#e6e6dc]" />
-            Natural AI Entry
+            Quick Smart Entry
           </button>
         </div>
       </div>
