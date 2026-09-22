@@ -66,20 +66,28 @@ export const LoginModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
-      <div className="w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-6 text-white text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-xs mb-3 shadow-inner">
-            <Wallet className="h-6 w-6 text-white" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto bg-[#141814] dark:bg-[#0c0f0c] transition-colors duration-500">
+      {/* Dynamic Animated Ambient Background Orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[15%] -left-[10%] h-[480px] w-[480px] rounded-full bg-gradient-to-br from-[#5A5A40]/50 to-[#526352]/40 blur-3xl opacity-60 animate-float-slow" />
+        <div className="absolute -bottom-[15%] -right-[10%] h-[520px] w-[520px] rounded-full bg-gradient-to-tr from-[#3a473a]/60 to-[#5A5A40]/50 blur-3xl opacity-60 animate-float-reverse" />
+        <div className="absolute top-[35%] left-[25%] h-[360px] w-[360px] rounded-full bg-gradient-to-r from-[#526352]/30 to-[#8c8c68]/30 blur-3xl opacity-40 animate-pulse" />
+      </div>
+
+      {/* Main Glassmorphic Auth Card */}
+      <div className="relative z-10 w-full max-w-md max-h-[92vh] overflow-y-auto rounded-3xl bg-white/95 dark:bg-[#202520]/95 border border-[#526352]/20 dark:border-[#526352]/30 shadow-2xl backdrop-blur-xl my-auto transition-all">
+        {/* Header Banner */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-[#3d4b3d] via-[#526352] to-[#5A5A40] p-5 sm:p-6 text-white text-center shadow-sm">
+          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md mb-2 shadow-inner">
+            <Wallet className="h-5 w-5 text-white" />
           </div>
-          <h2 className="text-2xl font-black tracking-tight">Hisaab</h2>
-          <p className="text-xs text-emerald-100 mt-1 font-medium">
-            GenAI Personal Finance & Group Expense Management
+          <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">Hisaab</h2>
+          <p className="text-[11px] text-[#e0e8e0] mt-0.5 font-medium">
+            Personal Finance & Group Expense Manager
           </p>
         </div>
 
-        <div className="p-6">
+        <div className="p-5 sm:p-6">
           {error && (
             <div className="mb-4 rounded-xl bg-rose-50 p-3.5 text-xs text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-200 dark:border-rose-800 space-y-2">
               <div className="flex items-start gap-2 font-medium">
@@ -91,7 +99,7 @@ export const LoginModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleDemo}
-                    className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-emerald-700 transition"
+                    className="rounded-lg bg-[#526352] px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-[#415041] transition"
                   >
                     Launch Demo Mode Instantly
                   </button>
@@ -101,7 +109,7 @@ export const LoginModal: React.FC = () => {
                       setMode('signup');
                       setError(null);
                     }}
-                    className="rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 transition"
+                    className="rounded-lg bg-white dark:bg-[#1a1a17] border border-[#e2e2d8] dark:border-[#33332c] px-3 py-1.5 text-xs font-bold text-[#33332d] dark:text-[#e5e5dc] hover:bg-[#fafaf6] transition"
                   >
                     Create Email Account
                   </button>
@@ -111,14 +119,14 @@ export const LoginModal: React.FC = () => {
           )}
 
           {successMsg && (
-            <div className="mb-4 flex items-center gap-2 rounded-xl bg-emerald-50 p-3 text-xs font-medium text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+            <div className="mb-4 flex items-center gap-2 rounded-xl bg-[#f0f4f1] p-3 text-xs font-medium text-[#526352] dark:bg-[#222d23] dark:text-[#6b826b] border border-[#526352]/30">
               <CheckCircle2 className="h-4 w-4 shrink-0" />
               <span>{successMsg}</span>
             </div>
           )}
 
           {/* Mode Switch Tabs */}
-          <div className="mb-5 flex rounded-xl bg-slate-100 p-1 dark:bg-slate-800">
+          <div className="mb-4 flex rounded-xl bg-[#f0f1e8] p-1 dark:bg-[#1a1a17]">
             <button
               onClick={() => {
                 setMode('signin');
@@ -126,8 +134,8 @@ export const LoginModal: React.FC = () => {
               }}
               className={`flex-1 rounded-lg py-2 text-xs font-bold transition ${
                 mode === 'signin'
-                  ? 'bg-white text-slate-900 shadow-xs dark:bg-slate-900 dark:text-white'
-                  : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+                  ? 'bg-white text-[#33332d] shadow-xs dark:bg-[#2a2a25] dark:text-[#e5e5dc]'
+                  : 'text-[#66665c] hover:text-[#33332d] dark:text-[#a3a395]'
               }`}
             >
               Sign In
@@ -139,47 +147,47 @@ export const LoginModal: React.FC = () => {
               }}
               className={`flex-1 rounded-lg py-2 text-xs font-bold transition ${
                 mode === 'signup'
-                  ? 'bg-white text-slate-900 shadow-xs dark:bg-slate-900 dark:text-white'
-                  : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+                  ? 'bg-white text-[#33332d] shadow-xs dark:bg-[#2a2a25] dark:text-[#e5e5dc]'
+                  : 'text-[#66665c] hover:text-[#33332d] dark:text-[#a3a395]'
               }`}
             >
               Create Account
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3.5">
             {mode === 'signup' && (
               <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-[11px] font-bold text-[#33332d] dark:text-[#e5e5dc] mb-1">
                   Full Name
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <User className="absolute left-3 top-2.5 h-4 w-4 text-[#8c8c7e]" />
                   <input
                     type="text"
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="e.g. Priya Sharma"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 py-2 text-sm text-slate-900 focus:border-emerald-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                    className="w-full rounded-xl border border-[#e2e2d8] bg-[#fafaf6] pl-9 pr-3 py-2 text-xs font-medium text-[#33332d] focus:border-[#526352] focus:outline-none dark:border-[#33332c] dark:bg-[#1a1a17] dark:text-[#e5e5dc]"
                   />
                 </div>
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-[11px] font-bold text-[#33332d] dark:text-[#e5e5dc] mb-1">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <Mail className="absolute left-3 top-2.5 h-4 w-4 text-[#8c8c7e]" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 py-2 text-sm text-slate-900 focus:border-emerald-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                  className="w-full rounded-xl border border-[#e2e2d8] bg-[#fafaf6] pl-9 pr-3 py-2 text-xs font-medium text-[#33332d] focus:border-[#526352] focus:outline-none dark:border-[#33332c] dark:bg-[#1a1a17] dark:text-[#e5e5dc]"
                 />
               </div>
             </div>
@@ -187,28 +195,28 @@ export const LoginModal: React.FC = () => {
             {mode !== 'forgot' && (
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  <label className="text-[11px] font-bold text-[#33332d] dark:text-[#e5e5dc]">
                     Password
                   </label>
                   {mode === 'signin' && (
                     <button
                       type="button"
                       onClick={() => setMode('forgot')}
-                      className="text-xs text-emerald-600 hover:underline dark:text-emerald-400 font-semibold"
+                      className="text-[11px] text-[#526352] hover:underline dark:text-[#6b826b] font-semibold"
                     >
                       Forgot?
                     </button>
                   )}
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <Lock className="absolute left-3 top-2.5 h-4 w-4 text-[#8c8c7e]" />
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 py-2 text-sm text-slate-900 focus:border-emerald-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                    className="w-full rounded-xl border border-[#e2e2d8] bg-[#fafaf6] pl-9 pr-3 py-2 text-xs font-medium text-[#33332d] focus:border-[#526352] focus:outline-none dark:border-[#33332c] dark:bg-[#1a1a17] dark:text-[#e5e5dc]"
                   />
                 </div>
               </div>
@@ -216,13 +224,13 @@ export const LoginModal: React.FC = () => {
 
             {mode === 'signup' && (
               <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-[11px] font-bold text-[#33332d] dark:text-[#e5e5dc] mb-1">
                   Preferred Currency
                 </label>
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                  className="w-full rounded-xl border border-[#e2e2d8] bg-[#fafaf6] px-3 py-2 text-xs font-medium text-[#33332d] focus:border-[#526352] focus:outline-none dark:border-[#33332c] dark:bg-[#1a1a17] dark:text-[#e5e5dc]"
                 >
                   <option value="INR">₹ INR (Indian Rupee)</option>
                   <option value="USD">$ USD (US Dollar)</option>
@@ -233,35 +241,38 @@ export const LoginModal: React.FC = () => {
               </div>
             )}
 
+            {/* Primary Action Button */}
             <button
               type="submit"
               disabled={submitting}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700 disabled:opacity-50 shadow-md shadow-emerald-600/20"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#5A5A40] to-[#526352] py-2.5 text-xs font-bold text-white transition hover:from-[#484832] hover:to-[#415041] disabled:opacity-50 shadow-md shadow-[#526352]/20 mt-1"
             >
               {submitting ? 'Please wait...' : mode === 'signin' ? 'Sign In to Hisaab' : mode === 'signup' ? 'Create Free Account' : 'Send Reset Link'}
               <ArrowRight className="h-4 w-4" />
             </button>
           </form>
 
-          {/* Social Google & Instant Demo Buttons */}
-          <div className="mt-5 space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+          {/* Secondary Actions (Demo Mode & Google Sign-In) */}
+          <div className="mt-4 space-y-2.5 pt-3.5 border-t border-[#ecece2] dark:border-[#2d2d27]">
+            {/* Demo Mode Button (Distinct Sage Pill Style) */}
             <button
               type="button"
               onClick={handleDemo}
               disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-xs font-bold text-white shadow-md shadow-emerald-600/20 hover:bg-emerald-700 transition"
+              className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-[#526352] bg-[#f0f4f1] py-2.5 text-xs font-bold text-[#2c382c] hover:bg-[#526352] hover:text-white dark:bg-[#222d23] dark:text-[#a1a17a] dark:border-[#526352] dark:hover:bg-[#526352] dark:hover:text-white transition shadow-xs"
             >
-              <Sparkles className="h-4 w-4 text-emerald-100" />
-              Instant Sandbox Demo Mode (Recommended)
+              <Sparkles className="h-4 w-4 shrink-0" />
+              <span>Instant Sandbox Demo Mode (Recommended)</span>
             </button>
 
+            {/* Google OAuth Button */}
             <button
               type="button"
               onClick={handleGoogleLogin}
               disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 transition"
+              className="w-full flex items-center justify-center gap-2 rounded-xl border border-[#e2e2d8] bg-white py-2.5 text-xs font-bold text-[#33332d] hover:bg-[#fafaf6] dark:border-[#33332c] dark:bg-[#1a1a17] dark:text-[#e5e5dc] dark:hover:bg-[#242420] transition"
             >
-              <svg className="h-4 w-4" viewBox="0 0 24 24">
+              <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
                   d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
@@ -279,7 +290,7 @@ export const LoginModal: React.FC = () => {
                   d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.58l3.99 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
                 />
               </svg>
-              Continue with Google (OAuth)
+              <span>Continue with Google (OAuth)</span>
             </button>
           </div>
         </div>
