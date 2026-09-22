@@ -192,7 +192,7 @@ export interface GroupSettlement {
   currency: CurrencyCode;
   date: string;
   note?: string;
-  status: 'pending' | 'completed' | 'cancelled';
+  status: 'upcoming' | 'pending' | 'completed' | 'cancelled';
   createdAt: string;
 }
 

@@ -1165,6 +1165,25 @@ export const deleteGroupSettlement = async (
   );
 };
 
+export const updateGroupSettlementStatus = async (
+  groupId: string,
+  settlementId: string,
+  status: 'upcoming' | 'pending' | 'completed' | 'cancelled',
+): Promise<void> => {
+  try {
+    await updateDoc(doc(db, "groups", groupId, "settlements", settlementId), { status });
+  } catch (e) {
+    console.warn("Firestore settlement status update fallback to local:", e);
+  }
+
+  const key = `group_settlements_${groupId}`;
+  const existing = getLocal<GroupSettlement[]>(key, []);
+  const updated = existing.map((settlement) =>
+    settlement.id === settlementId ? { ...settlement, status } : settlement
+  );
+  setLocal(key, updated);
+};
+
 /* =========================================================
    GROUP ACTIVITIES
 ========================================================= */

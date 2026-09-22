@@ -14,6 +14,7 @@ import {
   getGroupSettlements,
   joinGroupByInviteCode,
   removeGroupMember,
+  updateGroupSettlementStatus,
 } from '../../services/firestoreService';
 import { aiApiService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -65,6 +66,7 @@ export const GroupsView: React.FC<GroupsViewProps> = ({ groups, onRefreshGroups,
   // Settlement Form
   const [receiverId, setReceiverId] = useState('');
   const [settleAmount, setSettleAmount] = useState('');
+  const [settleStatus, setSettleStatus] = useState<'upcoming' | 'completed'>('upcoming');
   const [submittingSettle, setSubmittingSettle] = useState(false);
 
   // Action feedback
@@ -263,7 +265,7 @@ export const GroupsView: React.FC<GroupsViewProps> = ({ groups, onRefreshGroups,
         amount: numAmt,
         currency,
         date: new Date().toISOString().split('T')[0],
-        status: 'completed',
+        status: settleStatus,
         createdAt: new Date().toISOString(),
       });
 
@@ -271,10 +273,26 @@ export const GroupsView: React.FC<GroupsViewProps> = ({ groups, onRefreshGroups,
       setShowSettleModal(false);
       setSettleAmount('');
       setReceiverId('');
+      setSettleStatus('upcoming');
     } catch (err) {
       console.error(err);
     } finally {
       setSubmittingSettle(false);
+    }
+  };
+
+  const handleToggleSettlementStatus = async (
+    settlementId: string,
+    newStatus: 'upcoming' | 'pending' | 'completed' | 'cancelled'
+  ) => {
+    if (!selectedGroup) return;
+    try {
+      setSettlements((prev) =>
+        prev.map((s) => (s.id === settlementId ? { ...s, status: newStatus } : s))
+      );
+      await updateGroupSettlementStatus(selectedGroup.id, settlementId, newStatus);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -533,21 +551,45 @@ export const GroupsView: React.FC<GroupsViewProps> = ({ groups, onRefreshGroups,
                       {settlements.map((s) => (
                         <div key={s.id} className="flex items-center justify-between py-3">
                           <div className="flex items-center gap-2">
-                            <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />
+                            {s.status === 'completed' ? (
+                              <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />
+                            ) : (
+                              <ArrowRightLeft className="h-4 w-4 text-amber-500 shrink-0" />
+                            )}
                             <div>
                               <p className="text-xs font-semibold text-[#33332d] dark:text-[#e5e5dc]">
                                 <span className="font-bold">{s.payerName}</span> paid{' '}
                                 <span className="font-bold">{s.receiverName}</span>
                               </p>
-                              <p className="text-[10px] text-[#66665c] dark:text-[#a3a395]">
-                                {formatDate(s.date)} • Completed
-                              </p>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <p className="text-[10px] text-[#66665c] dark:text-[#a3a395]">
+                                  {formatDate(s.date)}
+                                </p>
+                                <span
+                                  className={`rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
+                                    s.status === 'completed'
+                                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                                      : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
+                                  }`}
+                                >
+                                  {s.status || 'upcoming'}
+                                </span>
+                              </div>
                             </div>
                           </div>
                           <div className="flex items-center gap-3">
-                            <p className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
+                            <p className={`text-xs font-extrabold ${s.status === 'completed' ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
                               {formatCurrency(s.amount, currency)}
                             </p>
+                            {s.status !== 'completed' && (
+                              <button
+                                onClick={() => handleToggleSettlementStatus(s.id, 'completed')}
+                                className="rounded-lg bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-400 transition"
+                                title="Mark split payment as completed"
+                              >
+                                Mark Completed
+                              </button>
+                            )}
                             <button
                               onClick={() => handleDeleteSettlement(s.id)}
                               disabled={deletingSettleId === s.id}
@@ -946,6 +988,19 @@ export const GroupsView: React.FC<GroupsViewProps> = ({ groups, onRefreshGroups,
                   onChange={(e) => setSettleAmount(e.target.value)}
                   className="mt-1 w-full rounded-xl border border-[#e2e2d8] bg-[#fafaf6] px-3 py-2 text-xs font-medium text-[#33332d] focus:border-[#5A5A40] focus:outline-none dark:border-[#33332c] dark:bg-[#1a1a17] dark:text-[#e5e5dc]"
                 />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-[#33332d] dark:text-[#e5e5dc]">
+                  Settlement Status
+                </label>
+                <select
+                  value={settleStatus}
+                  onChange={(e) => setSettleStatus(e.target.value as 'upcoming' | 'completed')}
+                  className="mt-1 w-full rounded-xl border border-[#e2e2d8] bg-[#fafaf6] px-3 py-2 text-xs font-medium text-[#33332d] focus:border-[#5A5A40] focus:outline-none dark:border-[#33332c] dark:bg-[#1a1a17] dark:text-[#e5e5dc]"
+                >
+                  <option value="upcoming">Upcoming (Split pending payment)</option>
+                  <option value="completed">Completed (Payment settled)</option>
+                </select>
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <button
